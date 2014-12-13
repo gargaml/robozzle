@@ -1,4 +1,5 @@
 open Vm
+open Graphics
 
 open Sdl
 
@@ -22,13 +23,17 @@ let loop () =
     | _ -> ()
   done
 	     
-let init () =
-  Sdl.init [`VIDEO;`TIMER];
-  at_exit Sdl.quit;
-  Sdlvideo.set_video_mode w h [`DOUBLEBUF;`HWSURFACE]
+let init filename =
+  let p = Load.puzzle filename in
+  let g = init_graphics w h p.w p.w in
+  let s = {position = G.make_point 0 0;
+	   orientation = G.make_vector 0 1;
+	   board = p;
+	   stars = 0} in
+  g, s
   
 let _ =
-  let screen = init () in
-  let p = Load.puzzle (Sys.argv.(1)) in
-  print_puzzle p;
+  let info, state = init Sys.argv.(1) in
+  draw_grid info state;
+  print_puzzle state.board;
   loop ()

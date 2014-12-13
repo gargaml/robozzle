@@ -19,7 +19,7 @@ type bc =
   | Color of color
 
 let string_of_bc = function
-  | Move -> "move"
+  | Move -> "Move"
   | RotateLeft -> "RotateLeft"
   | RotateRight -> "RotateRight"
   | Color c -> "Color " ^ string_of_color c
