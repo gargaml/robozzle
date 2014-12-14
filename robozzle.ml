@@ -8,12 +8,6 @@ module G = Geometry
 let w = 800
 let h = 600
 
-type info =
-    { width: int;
-      height: int;
-      screen: Sdlvideo.surface;
-      state: Vm.state }
-
 let loop () =
   let open Sdlevent in
   let keep_on = ref true in
@@ -26,14 +20,23 @@ let loop () =
 let init filename =
   let p = Load.puzzle filename in
   let g = init_graphics w h p.lines p.columns in
-  let s = {position = G.make_point 0 0;
-	   orientation = G.make_vector 0 1;
-	   board = p;
-	   stars = 0} in
+  let s = { position = p.start_position;
+	    orientation = p.start_orientation;
+	    board = p;
+	    stars = 0 } in
   g, s
-  
+
+let eval info state bs =
+  let rec loop state = function
+    | [] -> ()
+    | b :: bs ->
+       let state' = step state b in
+       refresh info state';
+       loop state' bs
+  in loop state bs
+       
 let _ =
   let info, state = init Sys.argv.(1) in
-  draw_grid info state;
-  print_puzzle state.board;
-  loop ()
+  refresh info state;
+  loop ();
+  Sdl.quit ()

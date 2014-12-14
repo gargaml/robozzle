@@ -2,6 +2,8 @@ open Sdlvideo
 
 open Vm
 
+module G = Geometry
+
 type tile =
     { position: Sdlvideo.rect;
       surface: Sdlvideo.surface }
@@ -64,11 +66,17 @@ let draw_grid {screen; grid = {lines;columns;tiles}} state =
     for j = 0 to columns - 1 do
       let tile = tiles.(i).(j) in
       draw_tile tile b.table.(i).(j);
-      blit_surface ~src:tile.surface ~dst:screen ~dst_rect:tile.position ();
-      printf "x:%d y:%d\n" tile.position.r_x tile.position.r_y
+      blit_surface ~src:tile.surface ~dst:screen ~dst_rect:tile.position ()
     done
-  done;
-  flip screen
-       
+  done
+
+let draw_bot {screen; grid = {tiles}} {position;orientation} =
+  let x,y = G.get_coordinates position in
+  let ({position;surface} as tile) = tiles.(y).(x) in
+  fill_rect surface (map_RGB surface magenta);
+  blit_surface ~src:surface ~dst:screen ~dst_rect:position ()
+    
 let refresh info state =
-  ()
+  draw_grid info state;
+  draw_bot info state;
+  flip info.screen

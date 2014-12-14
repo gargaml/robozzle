@@ -34,7 +34,9 @@ type square = {
 type puzzle = {
   table: square array array;
   lines: int;
-  columns: int
+  columns: int;
+  start_position: G.point;
+  start_orientation: G.vector
 }
 
 type state = {
