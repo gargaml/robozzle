@@ -3,11 +3,13 @@ module G = Geometry
 exception Game_over
 
 type color =
+  | Black
   | Red
   | Green
   | Blue
 
 let string_of_color = function
+  | Black -> "."
   | Red -> "r"
   | Green -> "g"
   | Blue -> "b"
@@ -30,9 +32,9 @@ type square = {
 }
 	       
 type puzzle = {
-  t: square option array array;
-  w: int;
-  h: int
+  table: square array array;
+  lines: int;
+  columns: int
 }
 
 type state = {
@@ -42,22 +44,20 @@ type state = {
   stars: int
 }
 
-let print_puzzle {t; w; h} =
+let print_puzzle {table; lines; columns} =
   let open Printf in
   let open String in
-  for i = 0 to h - 1 do
-    for j = 0 to w - 1 do
-      match t.(i).(j) with
-      | None -> printf "."
-      | Some {star = s; color = c} ->
-	 let cs = string_of_color c in
-	 printf "%s" (if (s: bool) then uppercase cs else cs)
+  for i = 0 to lines - 1 do
+    for j = 0 to columns - 1 do
+      let {star = s; color = c} = table.(i).(j) in
+      let cs = string_of_color c in
+      printf "%s" (if (s: bool) then uppercase cs else cs)
     done;
     print_newline ()
   done
 
-let is_in {w; h} (G.P (x,y)) =
-  x >= 0 && x < w && y >= 0 && y < h
+let is_in {lines; columns} (G.P (x,y)) =
+  x >= 0 && x < columns && y >= 0 && y < lines
 
 let next p o = G.move p o
 
@@ -68,15 +68,13 @@ let move p o b =
   else
     raise Game_over
     
-let color p ({t = b} as puzzle) c =
+let color p ({table = b} as puzzle) c =
   let open Geometry in
   let (P (x,y)) = p in
-  match b.(y).(x) with
-  | None -> assert false
-  | Some ({color = _} as square) ->
-     let square' = {square with color = c} in
-     b.(y).(x) <- Some square';
-     {puzzle with t = b}
+  let square = b.(y).(x) in
+  let square' = {square with color = c} in
+  b.(y).(x) <- square';
+  {puzzle with table = b}
 	       
 let step ({position = p;			 
 	   orientation = o;

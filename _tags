@@ -1,1 +1,1 @@
-true: package(yojson),package(sdl)
+true: package(yojson),package(sdl),debug

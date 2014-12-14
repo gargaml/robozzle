@@ -25,7 +25,7 @@ let loop () =
 	     
 let init filename =
   let p = Load.puzzle filename in
-  let g = init_graphics w h p.w p.w in
+  let g = init_graphics w h p.lines p.columns in
   let s = {position = G.make_point 0 0;
 	   orientation = G.make_vector 0 1;
 	   board = p;
