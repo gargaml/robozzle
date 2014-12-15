@@ -4,7 +4,7 @@ open Yojson.Basic
 module G = Geometry
 
 let deserialize_orientation =
-  let os = [(0,1);(1,0);(0,-1);(-1,0)] |> List.map (fun (u,v) -> G.make_vector u v)
+  let os = [(1,0);(0,-1);(-1,0);(0,1)] |> List.map (fun (u,v) -> G.make_vector u v)
   in fun n -> List.nth os n
        
 let deserialize json =

@@ -1,3 +1,4 @@
+open Parser
 open Vm
 open Graphics
 
@@ -34,9 +35,14 @@ let eval info state bs =
        refresh info state';
        loop state' bs
   in loop state bs
-       
+
+let bs = [Move]
+	  
 let _ =
+  let ic = open_in Sys.argv.(1) in
+  let p = Parser.program Lexer.read (Lexing.from_channel ic) in
+  let bcs = Compiler.compile p in
   let info, state = init Sys.argv.(1) in
-  refresh info state;
+  eval info state bs;
   loop ();
   Sdl.quit ()

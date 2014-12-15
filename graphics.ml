@@ -50,14 +50,18 @@ let init_graphics w h lines columns  =
     screen = s;
     grid = g }
 
-let draw_tile {surface} {star; color} =
+let draw_tile {position; surface} {star; color} =
   let c = match color with
     | Black -> map_RGB surface black
     | Red -> map_RGB surface red
     | Green -> map_RGB surface green
     | Blue -> map_RGB surface blue
   in
-  fill_rect surface c
+  fill_rect surface c;
+  if star then
+    let {r_x; r_y; r_w; r_h} = position in
+    let r = rect (r_w / 4) (r_h / 4) (r_w / 2) (r_h / 2) in
+    fill_rect ~rect:r surface (map_RGB surface yellow)
 
 let draw_grid {screen; grid = {lines;columns;tiles}} state =
   let open Printf in

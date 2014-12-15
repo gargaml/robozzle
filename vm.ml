@@ -14,17 +14,29 @@ let string_of_color = function
   | Green -> "g"
   | Blue -> "b"
 
-type bc =
-  | Move
-  | RotateLeft
-  | RotateRight
-  | Color of color
+type direction =
+  | Left
+  | Right
 
-let string_of_bc = function
+let string_of_direction = function
+  | Left -> "Left"
+  | Right -> "Right"
+      
+type 'a bc =
+  | Label of 'a
+  | Move
+  | Rotate of direction
+  | Color of color
+  | Call of 'a
+  | Return
+
+let string_of_bc string_of_a = function
+  | Label l -> "Label " ^ string_of_a l
   | Move -> "Move"
-  | RotateLeft -> "RotateLeft"
-  | RotateRight -> "RotateRight"
+  | Rotate d -> "Rotate " ^ string_of_direction d
   | Color c -> "Color " ^ string_of_color c
+  | Call f -> "Call " ^ string_of_a f
+  | Return -> "Return"
 
 type square = {
   star: bool;
@@ -85,10 +97,10 @@ let step ({position = p;
   | Move ->
      let p' = move p o b in
      {state with position = p'}
-  | RotateLeft ->
+  | Rotate Left ->
      let o' = G.rotate_left o in
      {state with orientation = o'}
-  | RotateRight ->
+  | Rotate Right ->
      let o' = G.rotate_right o in
      {state with orientation = o'}
   | Color c ->
